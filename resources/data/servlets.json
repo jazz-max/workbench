@@ -1,0 +1,31 @@
+{
+  "Демо": {
+    "demo-books": {
+      "classname": "App\\Servlets\\DemoBooksScraper",
+      "title": "Demo: парсер книг",
+      "url": "https://books.toscrape.com",
+      "description": "Демонстрационный сетевой скрапер. Обходит учебный сайт books.toscrape.com постранично и собирает книги выбранной категории в CSV (Название;Цена;Наличие;Рейтинг). Показывает HTTP-клиент, DomCrawler, пагинацию и живой лог.",
+      "params": [
+        {
+          "name": "category",
+          "label": "Категория (URL-путь)",
+          "type": "text",
+          "value": "catalogue/category/books_1/index.html"
+        },
+        {
+          "name": "maxPages",
+          "label": "Максимум страниц",
+          "type": "text",
+          "value": "3"
+        }
+      ]
+    },
+    "demo-csv": {
+      "classname": "App\\Servlets\\DemoCsvConverter",
+      "title": "Demo: конвертер CSV",
+      "url": "",
+      "description": "Демонстрационный файловый сервлет (без сети). Читает .csv из входной папки, нормализует ячейки и пишет результат с разделителем «;» в выходную папку. Показывает работу с файлами сервлета и очистку результатов.",
+      "params": []
+    }
+  }
+}
