@@ -20,18 +20,22 @@ Write a class with a `run()` method — Workbench gives it a web UI: one-click r
 
 ## Interface
 
+Run a servlet end-to-end — one click, logs streaming live over WebSocket, results ready to download:
+
+![Workbench demo](docs/demo.gif)
+
 Servlet list — live search (`⌘/Ctrl + K`), dark mode, sidebar by category:
 
 ![Servlet list](docs/screenshots/02-servlets.png)
-
-Servlet page — parameters, one-click run and **live WebSocket log streaming**:
-
-![Live servlet logs](docs/screenshots/04-live-logs.png)
 
 <details>
 <summary>More screenshots</summary>
 
 <br>
+
+Servlet page with live logs:
+
+![Live servlet logs](docs/screenshots/04-live-logs.png)
 
 Servlet page (ready to run):
 
