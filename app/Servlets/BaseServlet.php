@@ -35,7 +35,13 @@ abstract class BaseServlet
     protected function log(string $mes, int $level = 6): void
     {
         $ctx = $GLOBALS['_servlet_context'];
-        broadcast(new ServletLog($ctx['name'], $ctx['userId'], $mes, $level));
+        // Стриминг в UI — best-effort: если WebSocket-сервер (Reverb) не поднят,
+        // задача всё равно продолжает работу и пишет work.log.
+        try {
+            broadcast(new ServletLog($ctx['name'], $ctx['userId'], $mes, $level));
+        } catch (\Throwable) {
+            // ignore — live log streaming is optional
+        }
 
         if (isset($this->params->coockiePath) && is_dir($this->params->coockiePath)) {
             $prefix = match ($level) {

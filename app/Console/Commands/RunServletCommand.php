@@ -25,7 +25,7 @@ class RunServletCommand extends Command
         Cache::put($pidKey, getmypid(), 3600);
 
         try {
-            broadcast(new ServletStarted($name, $userId));
+            $this->emit(new ServletStarted($name, $userId));
 
             // Контекст для broadcasting из кода сервлета (BaseServlet::log()).
             $GLOBALS['_servlet_context'] = [
@@ -35,11 +35,11 @@ class RunServletCommand extends Command
 
             $this->runServlet($name, $userId, $action);
 
-            broadcast(new ServletLog($name, $userId, "Done {$name}", 5));
-            broadcast(new ServletFinished($name, $userId));
+            $this->emit(new ServletLog($name, $userId, "Done {$name}", 5));
+            $this->emit(new ServletFinished($name, $userId));
         } catch (\Throwable $e) {
-            broadcast(new ServletLog($name, $userId, 'Ошибка: '.$e->getMessage(), 3, 500));
-            broadcast(new ServletFinished($name, $userId));
+            $this->emit(new ServletLog($name, $userId, 'Ошибка: '.$e->getMessage(), 3, 500));
+            $this->emit(new ServletFinished($name, $userId));
             $this->error($e->getMessage());
 
             return self::FAILURE;
@@ -48,6 +48,16 @@ class RunServletCommand extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    /** Best-effort broadcast: задача не должна падать, если WebSocket-сервер (Reverb) не поднят. */
+    private function emit(object $event): void
+    {
+        try {
+            broadcast($event);
+        } catch (\Throwable) {
+            // ignore — live log streaming is optional
+        }
     }
 
     private function runServlet(string $name, int $userId, ?string $action): void
@@ -67,9 +77,9 @@ class RunServletCommand extends Command
             if (! is_callable([$servlet, $action])) {
                 throw new \RuntimeException("Метод '{$action}' не найден в классе '{$className}'");
             }
-            broadcast(new ServletLog($name, $userId, "запуск действия {$action}", 7));
+            $this->emit(new ServletLog($name, $userId, "запуск действия {$action}", 7));
             $servlet->$action();
-            broadcast(new ServletLog($name, $userId, "действие {$action} выполнено", 7));
+            $this->emit(new ServletLog($name, $userId, "действие {$action} выполнено", 7));
         } else {
             $servlet->run();
         }
